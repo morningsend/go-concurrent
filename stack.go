@@ -46,8 +46,9 @@ func (s *Stack) Push(value interface{}) {
 }
 
 func (s *Stack) Pop() (value interface{}, ok bool) {
+	var t *stackNode
 	for {
-		t := (*stackNode)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&s.top))))
+		t = (*stackNode)(atomic.LoadPointer((*unsafe.Pointer)(unsafe.Pointer(&s.top))))
 		if t == nil {
 			return nil, false
 		}
@@ -63,6 +64,9 @@ func (s *Stack) Pop() (value interface{}, ok bool) {
 			break
 		}
 	}
+
+	// garbage collection
+	t.next = nil
 	return
 }
 
